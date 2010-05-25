@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>csv (Cooker)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File Cooker.rb, line 21</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Cooker</span>.<span class="ruby-identifier">csv</span>(<span class="ruby-identifier">path</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">points</span>)
+    <span class="ruby-identifier">files</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-identifier">tmpEvents</span> = <span class="ruby-constant">Hash</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-identifier">points</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">key</span>,<span class="ruby-identifier">value</span><span class="ruby-operator">|</span> <span class="ruby-identifier">tmpEvents</span>[<span class="ruby-identifier">key</span>] = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>}
+    
+    <span class="ruby-constant">EventParser</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-node">&quot;#{path}/#{name}.snmp&quot;</span>, <span class="ruby-identifier">points</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">event</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">tmpEvents</span>[<span class="ruby-identifier">event</span>.<span class="ruby-identifier">event_id</span>.<span class="ruby-identifier">to_i</span>].<span class="ruby-identifier">push</span> <span class="ruby-identifier">event</span>
+    <span class="ruby-keyword kw">end</span>
+
+    <span class="ruby-identifier">tmpEvents</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">key</span>, <span class="ruby-identifier">group</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">if</span>((<span class="ruby-identifier">key</span> <span class="ruby-operator">%</span> <span class="ruby-value">2</span>) <span class="ruby-operator">==</span> <span class="ruby-value">1</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">group</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>)
+        <span class="ruby-identifier">tag</span> = <span class="ruby-regexp re">/(\w+)_START/</span>.<span class="ruby-identifier">match</span> <span class="ruby-identifier">points</span>[<span class="ruby-identifier">key</span>]
+        <span class="ruby-identifier">at</span> = <span class="ruby-node">&quot;#{path}/#{tag[1]}&quot;</span>
+        <span class="ruby-node">`mkdir -p #{at}`</span>
+        <span class="ruby-identifier">files</span>.<span class="ruby-identifier">push</span>(<span class="ruby-node">&quot;#{at}/#{tag[1]}.csv&quot;</span>)
+        <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-node">&quot;#{at}/#{tag[1]}.csv&quot;</span>,<span class="ruby-value str">&quot;w&quot;</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">file</span><span class="ruby-operator">|</span>
+          <span class="ruby-value">0</span>.<span class="ruby-identifier">upto</span>(<span class="ruby-identifier">group</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">int</span><span class="ruby-operator">|</span>
+            <span class="ruby-keyword kw">if</span>(<span class="ruby-operator">!</span><span class="ruby-identifier">tmpEvents</span>[<span class="ruby-identifier">key</span><span class="ruby-operator">+</span><span class="ruby-value">1</span>][<span class="ruby-identifier">int</span>].<span class="ruby-identifier">nil?</span>)
+             <span class="ruby-identifier">file</span>.<span class="ruby-identifier">puts</span>(<span class="ruby-node">&quot;#{int+1},#{group[int].delta(tmpEvents[key+1][int])}&quot;</span>)
+            <span class="ruby-keyword kw">end</span>
+          <span class="ruby-keyword kw">end</span>    
+        <span class="ruby-keyword kw">end</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">files</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

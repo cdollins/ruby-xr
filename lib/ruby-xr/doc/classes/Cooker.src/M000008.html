@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>cook (Cooker)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File Cooker.rb, line 48</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">Cooker</span>.<span class="ruby-identifier">cook</span>(<span class="ruby-identifier">tftp</span>, <span class="ruby-identifier">at</span>, <span class="ruby-identifier">name</span>, <span class="ruby-identifier">points</span>)
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;+#{Time.now}: Cooker stated&quot;</span>
+    <span class="ruby-identifier">f_path</span> = <span class="ruby-node">&quot;#{tftp}/#{name.join('_')}&quot;</span>
+    <span class="ruby-identifier">t_path</span> = <span class="ruby-node">&quot;#{at}/#{name.join('/')}&quot;</span>
+    <span class="ruby-identifier">loc</span> = <span class="ruby-node">&quot;#{t_path}/#{name[1]}&quot;</span>
+    <span class="ruby-node">`cp #{f_path}.kev #{loc}.kev`</span>
+    
+    <span class="ruby-constant">Cooker</span>.<span class="ruby-identifier">traceprinter</span>(<span class="ruby-identifier">loc</span>)
+    <span class="ruby-constant">Cooker</span>.<span class="ruby-identifier">x2cpel</span>(<span class="ruby-identifier">loc</span>)
+    <span class="ruby-constant">Cooker</span>.<span class="ruby-identifier">cpeldump</span>(<span class="ruby-identifier">loc</span>)
+    <span class="ruby-constant">Cooker</span>.<span class="ruby-identifier">snmp_grep</span>(<span class="ruby-identifier">loc</span>)
+    <span class="ruby-identifier">next_f</span> = <span class="ruby-constant">Cooker</span>.<span class="ruby-identifier">csv</span>(<span class="ruby-identifier">t_path</span>, <span class="ruby-identifier">name</span>[<span class="ruby-value">1</span>], <span class="ruby-identifier">points</span>)
+    <span class="ruby-node">`tar --remove-files -czvf #{loc}.tar.gz -C #{t_path} -- \`ls #{t_path} | grep #{name[1]}\``</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">next_f</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

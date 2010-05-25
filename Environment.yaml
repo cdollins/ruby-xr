@@ -1,0 +1,13 @@
+tftpserver: 
+ ip: 9.0.0.115
+ dir: cdollins
+console: 
+ host: localhost
+ port: 59000
+ username: root
+ password: root
+auxilary: 
+ host: localhost
+ port: 59001
+workspace: /ws/cdollins-bxb/workspace
+build_dir: /ws/cdollins-bxb/viking-fci

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>start_logger (XrTelnet)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File XrTelnet.rb, line 57</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">start_logger</span>(<span class="ruby-identifier">secs</span>)
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;+#{Time.now}: Starting logger for #{secs}&quot;</span>
+    <span class="ruby-ivar">@aux_conn</span>.<span class="ruby-identifier">cmd</span>(
+      <span class="ruby-value str">&quot;String&quot;</span> =<span class="ruby-operator">&gt;</span> 
+      <span class="ruby-node">&quot;tracelogger -F 1 -F 2 -F 6 -F 11 -n 0 -s #{secs} -M -S 100M -vvv&quot;</span>,
+      <span class="ruby-value str">&quot;Timeout&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-keyword kw">false</span>,
+      <span class="ruby-value str">&quot;Match&quot;</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-regexp re">/^Set/</span>)
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

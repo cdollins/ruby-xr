@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>new (XrTelnet)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File XrTelnet.rb, line 5</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">initialize</span>(<span class="ruby-identifier">console</span>, <span class="ruby-identifier">auxilary</span>, <span class="ruby-identifier">loc</span>)
+    <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;+#{Time.now}: Telnet initialized&quot;</span>
+    <span class="ruby-node">`mkdir -p #{loc}`</span>
+    <span class="ruby-ivar">@con_conn</span> = <span class="ruby-identifier">open_console</span>(<span class="ruby-identifier">console</span>, <span class="ruby-node">&quot;#{loc}/console.log&quot;</span>)
+    <span class="ruby-ivar">@aux_conn</span> = <span class="ruby-identifier">open_console</span>(<span class="ruby-identifier">auxilary</span>, <span class="ruby-node">&quot;#{loc}/auxilary.log&quot;</span>)
+    <span class="ruby-ivar">@configs</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

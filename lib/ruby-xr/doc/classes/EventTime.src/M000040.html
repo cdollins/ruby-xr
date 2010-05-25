@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>borrow (EventTime)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File EventTime.rb, line 28</span>
+   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">borrow</span>(<span class="ruby-identifier">that_time</span>)
+     <span class="ruby-identifier">a</span> = <span class="ruby-identifier">to_i</span>(<span class="ruby-ivar">@my_time</span>)
+     <span class="ruby-identifier">b</span> = <span class="ruby-identifier">that_time</span>
+     <span class="ruby-identifier">base</span> = [<span class="ruby-value">60</span>, <span class="ruby-value">60</span>, <span class="ruby-value">1000</span>, <span class="ruby-value">1000</span>]
+     <span class="ruby-keyword kw">for</span> <span class="ruby-identifier">i</span> <span class="ruby-keyword kw">in</span> <span class="ruby-value">0</span><span class="ruby-operator">..</span><span class="ruby-value">3</span>
+        <span class="ruby-identifier">num</span> = <span class="ruby-value">4</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">i</span>
+        <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">a</span>[<span class="ruby-identifier">num</span>] <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">b</span>[<span class="ruby-identifier">num</span>]
+           <span class="ruby-identifier">a</span>[<span class="ruby-identifier">num</span>] <span class="ruby-operator">+=</span> <span class="ruby-identifier">base</span>[<span class="ruby-identifier">num</span><span class="ruby-operator">-</span><span class="ruby-value">1</span>]
+           <span class="ruby-identifier">a</span>[<span class="ruby-identifier">num</span><span class="ruby-operator">-</span><span class="ruby-value">1</span>] <span class="ruby-operator">-=</span> <span class="ruby-value">1</span>
+        <span class="ruby-keyword kw">end</span>
+     <span class="ruby-keyword kw">end</span>
+     <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">a</span>
+   <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

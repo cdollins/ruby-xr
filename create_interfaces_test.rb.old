@@ -1,0 +1,125 @@
+$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/lib/gnuplot-2.2/lib/"))
+$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/lib/snmp-1.0.2/lib/"))
+$LOAD_PATH.unshift(File.expand_path(File.dirname(__FILE__) + "/lib/ruby-xr"))
+puts $LOAD_PATH
+
+require 'yaml'
+require 'Cooker.rb'
+require 'GraphPerf.rb'
+require 'ConfigCreate.rb'
+require 'XrTelnet.rb'
+
+x = 1
+describe "Performance Analysis" do
+  
+   before(:all) do
+     puts "+#{Time.now}: Preconfig started"
+
+     #Load Environment Data
+     @env = YAML::load(File.open('Environment.yaml'))
+     @points = EventPointEater.eat_header(@env['build_dir'])
+     @tftp = [@env["tftpserver"]["ip"], 
+              @env["tftpserver"]["dir"]]
+     @timestamp = Time.now.strftime("%b%d-%H%M%S")
+   end
+   
+   before(:each) do
+     puts "+#{Time.now}: Common build-up started"
+     @name = [@timestamp, "sample_#{x}"]
+
+     #Establish XR connections
+     @conn = XrTelnet.new(@env['console'],                 
+                          @env['auxilary'], 
+                          @env["workspace"]+ '/' + @name.join('/'))
+
+     @conn.config do |console|
+       #Prevent MORE from running
+       console.cmd("line con 0")
+       console.cmd("length 0")
+
+       #Configure SNMP
+       console.cmd("logging console debugging")
+       console.cmd("snmp-server community public RW SystemOwner")
+       console.cmd("snmp-server community sdr_owner SDROwner")
+       console.cmd("snmp-server community sys_owner SystemOwner")
+     end
+   end
+
+   after(:each) do
+     puts "+#{Time.now}: Common tear-down started"
+
+     #Copy logs of UUT
+     @conn.copy_log(@tftp.join('/'), "#{@name.join('_')}.kev")
+
+     #Close XR connections
+     @conn.close
+     
+     #Cook kev file into csv
+     csvs = Cooker.cook("/tftpboot/#{@tftp[1]}",
+                    @env["workspace"],
+                    @name,
+                    @points)
+
+     #Graph csv data using gnuplot
+     csvs.each {|csv| GraphPerf.graph_test(csv)}
+     
+     #Increment Sample Number
+     x += 1
+     puts @x
+   end
+   
+   ###Test Cases###
+
+   it "Attempt 1 should not timeout" do
+     puts "+#{Time.now}: First testcase started"
+     create_int(10000, @tftp, @name).should_not
+   end
+
+   it "Attempt 2 should not timeout" do
+     puts "+#{Time.now}: Second testcase started"
+     create_int(10000, @tftp, @name)
+   end
+
+   it "Attempt 3 should not timeout" do
+     puts "+#{Time.now}: Third testcase started"
+     create_int(10000, @tftp, @name)
+   end
+
+   ###HELPER METHODS###
+   
+   def create_int(num, tftp_str, log_name)
+     #Create config file with interfaces
+     ConfigCreate.create_loopback_conf(:size => num, 
+                                       :loc => "/tftpboot/#{tftp_str[1]}")
+
+     #Copy config file
+     @conn.exec("copy tftp://#{tftp_str.join('/')}/running.config nvram:changeset\n\n")
+          
+     #Load changes
+     @conn.config(:log => true,
+                  :command => "load nvram:changeset")
+
+   end
+   
+   def delete_int(num, tftp_str, log_name)
+     #Create config file with interfaces
+     ConfigCreate.delete_loopback_conf(num, "/tftpboot/#{tftp_str[1]}")
+
+     #Copy config file
+     @conn.exec("copy tftp://#{tftp_str.join('/')}/running.config nvram:changeset\n\n")
+          
+     #Load changes
+     @conn.config("load nvram:changeset")
+     
+     #Delete interfaces
+     @conn.unconfig(:log => true)
+
+   end
+
+   def create_int_tty(num, tftp_str, log_name)
+     #Read File into Telnet Socket
+     @conn.config(:log => true) do |con|
+       num.times { |i| con.puts("int l#{i}"); puts "Hello #{i}" }
+     end
+   end
+end

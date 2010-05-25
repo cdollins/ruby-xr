@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>get_elog_events (EventPointEater)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File EventPointEater.rb, line 25</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-constant">EventPointEater</span>.<span class="ruby-identifier">get_elog_events</span>(<span class="ruby-identifier">build_dir</span>)
+    <span class="ruby-identifier">points</span> = <span class="ruby-value str">&quot;snmp/mibs/ifmib/include/ifmib_elog_points.h&quot;</span>
+    <span class="ruby-identifier">event_ids</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-identifier">file</span> = <span class="ruby-node">&quot;#{build_dir}/#{points}&quot;</span>
+    <span class="ruby-constant">File</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">file</span>, <span class="ruby-value str">&quot;r&quot;</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span>
+      <span class="ruby-identifier">match</span> = <span class="ruby-regexp re">/^\#define\s+(\w+)\s+EV_NUM\((\d+)\)/</span>.<span class="ruby-identifier">match</span>(<span class="ruby-identifier">line</span>)
+      <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">match</span>.<span class="ruby-identifier">nil?</span>     
+        <span class="ruby-identifier">event_ids</span>.<span class="ruby-identifier">push</span> [<span class="ruby-identifier">match</span>[<span class="ruby-value">2</span>].<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">match</span>[<span class="ruby-value">1</span>]]
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">event_ids</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
