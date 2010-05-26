@@ -1,13 +1,13 @@
 tftpserver: 
- ip: 9.0.0.115
- dir: cdollins
+ ip: 1.1.1.1
+ dir: vipaca
 console: 
  host: localhost
- port: 59000
+ port: 12345
  username: root
  password: root
 auxilary: 
  host: localhost
- port: 59001
-workspace: /ws/cdollins-bxb/workspace
-build_dir: /ws/cdollins-bxb/viking-fci
+ port: 12346
+workspace: /tmp/workspace
+build_dir: /ws/buils
